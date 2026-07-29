@@ -1,0 +1,61 @@
+﻿id;dni;cliente;localidad;agroveterinaria;producto;precio_lista;descuento_pct;monto_descuento;total_pagado;fecha
+1;70000001;Cliente Asillo 001;Asillo;AgroVet Asillo Centro;Antiparasitario Bovino;80;20;16;64;15/07/2026
+2;70000002;Cliente Asillo 002;Asillo;Veterinaria San Isidro;Vitamina Complejo B;45;20;9;36;15/07/2026
+3;70000003;Cliente Asillo 003;Asillo;Campo Salud Animal;Sales Minerales;60;15;9;51;15/07/2026
+4;70000004;Cliente Asillo 004;Asillo;AgroVet Asillo Centro;Alimento Balanceado;120;10;12;108;15/07/2026
+5;70000005;Cliente Asillo 005;Asillo;Veterinaria San Isidro;Desinfectante Pecuario;35;20;7;28;15/07/2026
+6;70000006;Cliente Asillo 006;Asillo;Campo Salud Animal;Vacuna Triple;90;15;13.5;76.5;15/07/2026
+7;70000007;Cliente Asillo 007;Asillo;AgroVet Asillo Centro;Antibiótico;75;15;11.25;63.75;15/07/2026
+8;70000008;Cliente Asillo 008;Asillo;Veterinaria San Isidro;Calcio Líquido;40;20;8;32;15/07/2026
+9;70000009;Cliente Asillo 009;Asillo;Campo Salud Animal;Suplemento Energético;55;15;8.25;46.75;15/07/2026
+10;70000010;Cliente Asillo 010;Asillo;AgroVet Asillo Centro;Vitaminas ADE;50;20;10;40;15/07/2026
+11;70000011;Cliente Asillo 011;Asillo;Veterinaria San Isidro;Antiparasitario Ovino;65;20;13;52;15/07/2026
+12;70000012;Cliente Asillo 012;Asillo;Campo Salud Animal;Probiótico;48;15;7.2;40.8;15/07/2026
+13;70000013;Cliente Asillo 013;Asillo;AgroVet Asillo Centro;Vacuna Carbunco;88;20;17.6;70.4;15/07/2026
+14;70000014;Cliente Asillo 014;Asillo;Veterinaria San Isidro;Mineral Plus;62;15;9.3;52.7;15/07/2026
+15;70000015;Cliente Asillo 015;Asillo;Campo Salud Animal;Suero Rehidratante;22;10;2.2;19.8;15/07/2026
+16;70000016;Cliente Ayaviri 001;Ayaviri;AgroVet Ayaviri;Antiparasitario Bovino;80;20;16;64;15/07/2026
+17;70000017;Cliente Ayaviri 002;Ayaviri;Veterinaria Melgar;Vitamina Complejo B;45;20;9;36;15/07/2026
+18;70000018;Cliente Ayaviri 003;Ayaviri;Campo Animal Ayaviri;Sales Minerales;60;15;9;51;15/07/2026
+19;70000019;Cliente Ayaviri 004;Ayaviri;AgroVet Ayaviri;Alimento Balanceado;120;10;12;108;15/07/2026
+20;70000020;Cliente Ayaviri 005;Ayaviri;Veterinaria Melgar;Desinfectante Pecuario;35;20;7;28;15/07/2026
+21;70000021;Cliente Ayaviri 006;Ayaviri;Campo Animal Ayaviri;Vacuna Triple;90;15;13.5;76.5;15/07/2026
+22;70000022;Cliente Ayaviri 007;Ayaviri;AgroVet Ayaviri;Antibiótico;75;15;11.25;63.75;15/07/2026
+23;70000023;Cliente Ayaviri 008;Ayaviri;Veterinaria Melgar;Calcio Líquido;40;20;8;32;15/07/2026
+24;70000024;Cliente Ayaviri 009;Ayaviri;Campo Animal Ayaviri;Suplemento Energético;55;15;8.25;46.75;15/07/2026
+25;70000025;Cliente Ayaviri 010;Ayaviri;AgroVet Ayaviri;Vitaminas ADE;50;20;10;40;15/07/2026
+26;70000026;Cliente Ayaviri 011;Ayaviri;Veterinaria Melgar;Antiparasitario Ovino;65;20;13;52;15/07/2026
+27;70000027;Cliente Ayaviri 012;Ayaviri;Campo Animal Ayaviri;Probiótico;48;15;7.2;40.8;15/07/2026
+28;70000028;Cliente Ayaviri 013;Ayaviri;AgroVet Ayaviri;Vacuna Carbunco;88;20;17.6;70.4;15/07/2026
+29;70000029;Cliente Ayaviri 014;Ayaviri;Veterinaria Melgar;Mineral Plus;62;15;9.3;52.7;15/07/2026
+30;70000030;Cliente Ayaviri 015;Ayaviri;Campo Animal Ayaviri;Suero Rehidratante;22;10;2.2;19.8;15/07/2026
+31;70000031;Cliente Azángaro 001;Azángaro;AgroVet Azángaro;Antiparasitario Bovino;80;20;16;64;15/07/2026
+32;70000032;Cliente Azángaro 002;Azángaro;Veterinaria Altiplano;Vitamina Complejo B;45;20;9;36;15/07/2026
+33;70000033;Cliente Azángaro 003;Azángaro;Agro Rural Azángaro;Sales Minerales;60;15;9;51;15/07/2026
+34;70000034;Cliente Azángaro 004;Azángaro;AgroVet Azángaro;Alimento Balanceado;120;10;12;108;15/07/2026
+35;70000035;Cliente Azángaro 005;Azángaro;Veterinaria Altiplano;Desinfectante Pecuario;35;20;7;28;15/07/2026
+36;70000036;Cliente Azángaro 006;Azángaro;Agro Rural Azángaro;Vacuna Triple;90;15;13.5;76.5;15/07/2026
+37;70000037;Cliente Azángaro 007;Azángaro;AgroVet Azángaro;Antibiótico;75;15;11.25;63.75;15/07/2026
+38;70000038;Cliente Azángaro 008;Azángaro;Veterinaria Altiplano;Calcio Líquido;40;20;8;32;15/07/2026
+39;70000039;Cliente Azángaro 009;Azángaro;Agro Rural Azángaro;Suplemento Energético;55;15;8.25;46.75;15/07/2026
+40;70000040;Cliente Azángaro 010;Azángaro;AgroVet Azángaro;Vitaminas ADE;50;20;10;40;15/07/2026
+41;70000041;Cliente Azángaro 011;Azángaro;Veterinaria Altiplano;Antiparasitario Ovino;65;20;13;52;15/07/2026
+42;70000042;Cliente Azángaro 012;Azángaro;Agro Rural Azángaro;Probiótico;48;15;7.2;40.8;15/07/2026
+43;70000043;Cliente Azángaro 013;Azángaro;AgroVet Azángaro;Vacuna Carbunco;88;20;17.6;70.4;15/07/2026
+44;70000044;Cliente Azángaro 014;Azángaro;Veterinaria Altiplano;Mineral Plus;62;15;9.3;52.7;15/07/2026
+45;70000045;Cliente Azángaro 015;Azángaro;Agro Rural Azángaro;Suero Rehidratante;22;10;2.2;19.8;15/07/2026
+46;70000046;Cliente Chupaca 001;Chupaca;AgroVet Chupaca;Antiparasitario Bovino;80;20;16;64;15/07/2026
+47;70000047;Cliente Chupaca 002;Chupaca;Veterinaria Valle Verde;Vitamina Complejo B;45;20;9;36;15/07/2026
+48;70000048;Cliente Chupaca 003;Chupaca;Campo Animal Chupaca;Sales Minerales;60;15;9;51;15/07/2026
+49;70000049;Cliente Chupaca 004;Chupaca;AgroVet Chupaca;Alimento Balanceado;120;10;12;108;15/07/2026
+50;70000050;Cliente Chupaca 005;Chupaca;Veterinaria Valle Verde;Desinfectante Pecuario;35;20;7;28;15/07/2026
+51;70000051;Cliente Chupaca 006;Chupaca;Campo Animal Chupaca;Vacuna Triple;90;15;13.5;76.5;15/07/2026
+52;70000052;Cliente Chupaca 007;Chupaca;AgroVet Chupaca;Antibiótico;75;15;11.25;63.75;15/07/2026
+53;70000053;Cliente Chupaca 008;Chupaca;Veterinaria Valle Verde;Calcio Líquido;40;20;8;32;15/07/2026
+54;70000054;Cliente Chupaca 009;Chupaca;Campo Animal Chupaca;Suplemento Energético;55;15;8.25;46.75;15/07/2026
+55;70000055;Cliente Chupaca 010;Chupaca;AgroVet Chupaca;Vitaminas ADE;50;20;10;40;15/07/2026
+56;70000056;Cliente Chupaca 011;Chupaca;Veterinaria Valle Verde;Antiparasitario Ovino;65;20;13;52;15/07/2026
+57;70000057;Cliente Chupaca 012;Chupaca;Campo Animal Chupaca;Probiótico;48;15;7.2;40.8;15/07/2026
+58;70000058;Cliente Chupaca 013;Chupaca;AgroVet Chupaca;Vacuna Carbunco;88;20;17.6;70.4;15/07/2026
+59;70000059;Cliente Chupaca 014;Chupaca;Veterinaria Valle Verde;Mineral Plus;62;15;9.3;52.7;15/07/2026
+60;70000060;Cliente Chupaca 015;Chupaca;Campo Animal Chupaca;Suero Rehidratante;22;10;2.2;19.8;15/07/2026
