@@ -99,7 +99,7 @@ const AdminServicios = () => {
 
         // Enriquecer la asignacion con nombres
         // @ts-ignore
-        const cfg = cfgData.find(c => c.id === a.agro_servicio_id);
+        const cfg: any = cfgData.find(c => c.id === a.agro_servicio_id);
         
         asignacionesByDni[a.cliente_dni].push({
           id: a.id,

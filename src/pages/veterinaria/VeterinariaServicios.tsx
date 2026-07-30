@@ -194,7 +194,7 @@ const VeterinariaServicios = ({ selectedAgroId }: Props) => {
                     <p className="text-sm text-gray-500">DNI: {cliente.dni}</p>
                   </div>
                   <span className="bg-purple-100 text-purple-700 text-xs px-2.5 py-1 rounded-full font-semibold border border-purple-200">
-                    {cliente.localidades?.nombre}
+                    {(cliente as any).localidades?.nombre}
                   </span>
                 </div>
               </div>
