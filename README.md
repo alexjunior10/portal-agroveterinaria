@@ -1,68 +1,55 @@
-# Caja Los Andes - MVP Gestión de Beneficios en Agroveterinarias
+# Portal Agroveterinaria - MVP
 
-Este proyecto es un Prototipo Funcional (MVP) diseñado para validar el flujo de negocio del nuevo beneficio para clientes agropecuarios de Caja Los Andes.
+Este es el Producto Mínimo Viable (MVP) para el ecosistema de beneficios de Caja Los Andes enfocado en el sector rural y agroveterinario. Permite la gestión de descuentos en productos e insumos, cobertura de servicios veterinarios básicos, y el registro estructurado de clientes referidos (prospectos).
+
+## Objetivo del MVP
+Validar el interés y operatividad de las Agroveterinarias aliadas y la respuesta de los clientes rurales a un ecosistema de beneficios, minimizando la fricción tecnológica mediante una aplicación web de fácil adopción, rápida y segura.
 
 ## Tecnologías Utilizadas
-
-- **Frontend:** React, TypeScript, Vite
-- **Estilos:** Tailwind CSS (con paleta de colores institucional)
-- **Rutas:** React Router DOM
-- **Backend/Base de datos:** Supabase (PostgreSQL)
+* **Frontend**: [React 18](https://react.dev/) + [Vite](https://vitejs.dev/)
+* **Estilos e Interfaz**: [TailwindCSS](https://tailwindcss.com/) + [Lucide Icons](https://lucide.dev/)
+* **Enrutamiento**: [React Router v6](https://reactrouter.com/)
+* **Backend y Base de Datos**: [Supabase](https://supabase.com/) (PostgreSQL, Supabase Auth)
+* **Reportes**: `exceljs`, `file-saver`
 
 ## Estructura del Proyecto
 
-El proyecto se divide en dos módulos principales:
-
-1. **Portal Agroveterinaria (`/veterinaria`)**: Interfaz rápida para que los veterinarios busquen clientes por DNI, verifiquen su estado y registren el canje del beneficio en menos de 20 segundos.
-2. **Portal Administrador (`/admin`)**: Panel de control para que el equipo de Caja Los Andes visualice los indicadores (KPIs), exporte registros y administre el catálogo de productos.
-
-## Instrucciones de Instalación Local
-
-### 1. Preparar la Base de Datos (Supabase)
-
-1. Crea un nuevo proyecto en [Supabase](https://supabase.com/).
-2. Ve al **SQL Editor** y ejecuta todo el contenido del archivo `schema_and_seed.sql` que se encuentra en la raíz de este proyecto. Este script:
-   - Crea las tablas `clientes`, `productos` y `usos_beneficio`.
-   - Crea la función RPC `registrar_beneficio` para prevenir canjes duplicados (concurrencia).
-   - Inserta datos ficticios (20 clientes, 5 productos).
-   - Configura políticas RLS (Row Level Security) abiertas para facilitar la validación del MVP.
-
-### 2. Configurar Variables de Entorno
-
-1. Copia el archivo `.env.example` y renómbralo a `.env`.
-2. En Supabase, ve a *Project Settings -> API* y copia la **URL** y la **anon key**.
-3. Pega esos valores en el archivo `.env`:
-
-```env
-VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
-VITE_SUPABASE_ANON_KEY=tu-anon-key
+```
+caja-los-andes-beneficios-mvp/
+├── docs/                      # Documentación técnica de arquitectura y flujos
+├── src/
+│   ├── components/            # Componentes reutilizables (Protected Routes)
+│   ├── context/               # AuthContext para gestión global de sesión
+│   ├── lib/                   # Configuración del cliente Supabase
+│   ├── pages/
+│   │   ├── admin/             # Portal del administrador central
+│   │   ├── auth/              # Pantalla de login de la aplicación
+│   │   └── veterinaria/       # Portal exclusivo para sedes agroveterinarias
+│   ├── App.tsx                # Configuración principal de enrutamiento
+│   ├── index.css              # Utilidades de Tailwind y estilos base
+│   └── types.ts               # Definiciones de TypeScript
+├── vercel.json                # Reglas de enrutamiento para despliegue en Vercel
+└── setup_auth.sql             # Script SQL para habilitar usuarios y roles
 ```
 
-### 3. Instalar y Ejecutar
+## Ejecución Local
 
-```bash
-# Instalar dependencias
-npm install
+1. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-# Iniciar servidor de desarrollo
-npm run dev
-```
+2. **Variables de entorno:**
+   Crea un archivo `.env` basado en `.env.example`:
+   ```env
+   VITE_SUPABASE_URL=tu_supabase_url
+   VITE_SUPABASE_ANON_KEY=tu_supabase_anon_key
+   ```
 
-La aplicación estará disponible en `http://localhost:5173`.
+3. **Ejecutar en desarrollo:**
+   ```bash
+   npm run dev
+   ```
 
-## Instrucciones para Despliegue en Vercel
-
-1. Sube el código a un repositorio de GitHub (asegúrate de que el archivo `.env` esté en tu `.gitignore`).
-2. Inicia sesión en [Vercel](https://vercel.com/) y haz clic en **Add New -> Project**.
-3. Importa tu repositorio de GitHub.
-4. En el paso de configuración, expande la sección **Environment Variables**.
-5. Agrega las dos variables de tu proyecto de Supabase (`VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`).
-6. Haz clic en **Deploy**.
-
-¡Y listo! Vercel detectará automáticamente que es un proyecto Vite y lo construirá correctamente.
-
-## Notas sobre Seguridad y Producción
-
-> [!WARNING]  
-> Este proyecto es un MVP validatorio. Actualmente el panel de administración no cuenta con sistema de autenticación (Login) y las políticas RLS de Supabase están configuradas en modo público.  
-> **Antes de lanzar el producto real a producción**, se debe integrar autenticación (ej. Supabase Auth) y restringir el acceso a la base de datos únicamente a usuarios autorizados.
+## Despliegue en Producción
+El proyecto está optimizado para funcionar en **Vercel**. Ver `docs/Guia_Despliegue.md` para más información sobre cómo mapear el archivo `vercel.json` y configurar el proyecto.

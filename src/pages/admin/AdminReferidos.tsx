@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import toast from 'react-hot-toast';
 
 export default function AdminReferidos() {
   const [referidos, setReferidos] = useState<any[]>([]);
@@ -82,7 +83,7 @@ export default function AdminReferidos() {
 
       if (editForm.estado === 'Desembolsado') {
         if (!editForm.monto_desembolsado || !editForm.fecha_desembolso) {
-          alert("Por favor ingrese el monto y la fecha de desembolso.");
+          toast.error("Por favor ingrese el monto y la fecha de desembolso.");
           setIsSaving(false);
           return;
         }
@@ -100,10 +101,11 @@ export default function AdminReferidos() {
 
       if (error) throw error;
       
+      toast.success('Estado actualizado correctamente');
       setIsModalOpen(false);
       fetchReferidos();
     } catch (err: any) {
-      alert("Error al actualizar: " + err.message);
+      toast.error("Error al actualizar: " + err.message);
     } finally {
       setIsSaving(false);
     }

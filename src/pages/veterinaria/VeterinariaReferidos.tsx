@@ -10,6 +10,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Agroveterinaria } from '../../types';
 
 interface VeterinariaReferidosProps {
@@ -66,7 +67,7 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
 
   const handleRegister = async () => {
     if (!referidoForm.dni || !referidoForm.monto) {
-      alert("Por favor ingrese al menos el DNI y el Monto.");
+      toast.error("Por favor ingrese al menos el DNI y el Monto.");
       return;
     }
 
@@ -87,11 +88,12 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
       if (error) throw error;
       
       // Success
+      toast.success('Cliente registrado correctamente');
       setShowSuccessModal(true);
       fetchData(); // Refresh list
     } catch (err: any) {
       console.error(err);
-      alert("Error al registrar: " + err.message);
+      toast.error("Error al registrar: " + err.message);
     } finally {
       setIsSubmitting(false);
     }
