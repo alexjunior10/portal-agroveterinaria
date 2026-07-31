@@ -5,7 +5,7 @@ La aplicación está soportada por una base de datos PostgreSQL alojada en Supab
 ## Tablas Principales
 
 ### 1. `localidades`
-Catálogo de localidades donde opera Caja Los Andes.
+Catálogo de localidades donde opera Los Andes.
 - `id`: UUID (PK)
 - `nombre`: Nombre de la localidad.
 
@@ -23,7 +23,7 @@ Catálogo global de productos y la relación de qué agroveterinaria los vende y
 Catálogo de tipos de servicios (Ej: Baño, Consulta, Curación) y la tarifa base / porcentaje de cobertura asignado por cada sede.
 
 ### 5. `clientes`
-Base de datos de clientes oficiales de Caja Los Andes validados.
+Base de datos de clientes oficiales de Los Andes validados.
 - `dni`: PK.
 - `nombres`, `apellidos`, `localidad_id`.
 

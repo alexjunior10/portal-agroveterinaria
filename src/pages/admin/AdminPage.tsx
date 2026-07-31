@@ -23,11 +23,11 @@ const AdminPage = () => {
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-andes-dark text-white flex flex-col">
         <div className="p-6 border-b border-andes flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-white text-andes-dark flex items-center justify-center font-bold">
-            CA
+          <div className="w-8 h-8 rounded bg-white text-andes-dark flex items-center justify-center overflow-hidden">
+            <img src="/logo.jpg" alt="Los Andes Logo" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h1 className="font-bold tracking-tight leading-tight">Caja Los Andes</h1>
+            <h1 className="font-bold tracking-tight leading-tight">Los Andes</h1>
             <p className="text-xs text-andes-light opacity-80">Portal Admin</p>
           </div>
         </div>

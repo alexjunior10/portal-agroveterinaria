@@ -65,10 +65,10 @@ const VeterinariaPage = () => {
     return (
       <div className="fixed inset-0 bg-andes-dark flex flex-col items-center justify-center z-[200]">
         <div className="animate-pulse flex flex-col items-center">
-          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
-            <span className="text-andes-dark font-black text-3xl">CA</span>
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-2xl overflow-hidden">
+            <img src="/logo.jpg" alt="Los Andes Logo" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-white text-3xl font-bold tracking-tight">Caja Los Andes</h1>
+          <h1 className="text-white text-3xl font-bold tracking-tight">Los Andes</h1>
           <p className="text-andes-light mt-2 flex items-center gap-2">
             <Loader2 size={16} className="animate-spin" />
             Cargando portal...
@@ -93,11 +93,11 @@ const VeterinariaPage = () => {
       <aside className={`fixed md:static inset-y-0 left-0 w-64 bg-andes-dark text-white flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-6 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-white text-andes-dark flex items-center justify-center font-bold">
-              CA
+            <div className="w-8 h-8 rounded bg-white text-andes-dark flex items-center justify-center overflow-hidden">
+              <img src="/logo.jpg" alt="Los Andes Logo" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h1 className="font-bold tracking-tight leading-tight">Caja Los Andes</h1>
+              <h1 className="font-bold tracking-tight leading-tight">Los Andes</h1>
               <p className="text-xs text-andes-light opacity-80">Agroveterinaria</p>
             </div>
           </div>

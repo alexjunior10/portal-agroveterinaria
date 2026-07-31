@@ -75,10 +75,10 @@ export default function LoginPage() {
           <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-black/10 rounded-full blur-2xl"></div>
           
           <div className="relative z-10">
-            <div className="w-16 h-16 bg-white rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg transform -rotate-6">
-              <span className="text-andes font-black text-2xl tracking-tighter">CA</span>
+            <div className="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg overflow-hidden">
+              <img src="/logo.jpg" alt="Los Andes Logo" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Caja Los Andes</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Los Andes</h1>
             <p className="text-andes-light text-sm mt-1 opacity-90">Portal Corporativo</p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="bg-gray-50 p-4 border-t border-gray-100 text-center">
           <p className="text-xs text-gray-500 font-medium">
-            Acceso exclusivo para personal autorizado de Caja Los Andes.
+            Acceso exclusivo para personal autorizado de Los Andes.
           </p>
         </div>
       </div>

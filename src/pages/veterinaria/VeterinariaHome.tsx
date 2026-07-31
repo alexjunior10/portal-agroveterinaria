@@ -90,7 +90,7 @@ const VeterinariaHome = ({ selectedAgro, onChangeAgroRequest }: Props) => {
           <div className="max-w-xl text-white">
             <h1 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight">Portal Agroveterinaria</h1>
             <p className="text-blue-50 text-base md:text-lg leading-relaxed font-light mb-6">
-              Centro de operaciones para gestionar los beneficios de los clientes de Caja Los Andes.
+              Centro de operaciones para gestionar los beneficios de los clientes de Los Andes.
             </p>
           </div>
 

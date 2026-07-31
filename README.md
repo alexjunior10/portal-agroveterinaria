@@ -1,6 +1,6 @@
 # Portal Agroveterinaria - MVP
 
-Este es el Producto Mínimo Viable (MVP) para el ecosistema de beneficios de Caja Los Andes enfocado en el sector rural y agroveterinario. Permite la gestión de descuentos en productos e insumos, cobertura de servicios veterinarios básicos, y el registro estructurado de clientes referidos (prospectos).
+Este es el Producto Mínimo Viable (MVP) para el ecosistema de beneficios de Los Andes enfocado en el sector rural y agroveterinario. Permite la gestión de descuentos en productos e insumos, cobertura de servicios veterinarios básicos, y el registro estructurado de clientes referidos (prospectos).
 
 ## Objetivo del MVP
 Validar el interés y operatividad de las Agroveterinarias aliadas y la respuesta de los clientes rurales a un ecosistema de beneficios, minimizando la fricción tecnológica mediante una aplicación web de fácil adopción, rápida y segura.
