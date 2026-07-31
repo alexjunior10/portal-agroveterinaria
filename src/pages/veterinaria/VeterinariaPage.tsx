@@ -90,7 +90,7 @@ const VeterinariaPage = () => {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed md:static inset-y-0 left-0 w-64 bg-andes-dark text-white flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`fixed md:sticky md:top-0 inset-y-0 left-0 h-screen w-64 bg-andes-dark text-white flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-6 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded bg-white text-andes-dark flex items-center justify-center overflow-hidden">
@@ -106,7 +106,7 @@ const VeterinariaPage = () => {
           </button>
         </div>
         
-        <nav className="p-4 flex-1 space-y-2">
+        <nav className="p-4 flex-1 space-y-2 overflow-y-auto">
           <NavLink 
             to="/veterinaria" 
             end
@@ -155,7 +155,7 @@ const VeterinariaPage = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden flex flex-col min-h-screen">
+      <main className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Header (Top Bar) */}
         <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-30">
           <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">

@@ -21,7 +21,7 @@ const AdminPage = () => {
   return (
     <div className="min-h-screen bg-bgMain flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-andes-dark text-white flex flex-col">
+      <aside className="w-full md:w-64 bg-andes-dark text-white flex flex-col md:sticky md:top-0 h-screen">
         <div className="p-6 border-b border-andes flex items-center gap-3">
           <div className="w-8 h-8 rounded bg-white text-andes-dark flex items-center justify-center overflow-hidden">
             <img src="/logo.jpg" alt="Los Andes Logo" className="w-full h-full object-cover" />
@@ -32,7 +32,7 @@ const AdminPage = () => {
           </div>
         </div>
         
-        <nav className="p-4 flex-1 space-y-2">
+        <nav className="p-4 flex-1 space-y-2 overflow-y-auto">
           <NavLink 
             to="/admin" 
             end
@@ -84,7 +84,7 @@ const AdminPage = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden flex flex-col">
+      <main className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Topbar for mobile */}
         <header className="bg-white border-b border-gray-100 p-4 shadow-sm flex items-center justify-between md:hidden">
           <span className="font-bold text-textMain">Admin Panel</span>
