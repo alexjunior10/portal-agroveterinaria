@@ -12,9 +12,9 @@ const VeterinariaHome = ({ selectedAgro, onChangeAgroRequest }: Props) => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     productosConvenio: 0,
-    serviciosDisponibles: 0,
-    beneficiosPendientes: 0,
-    serviciosPendientes: 0
+    serviciosAsignados: 0,
+    clientesAtendidos: 0,
+    beneficiosEntregados: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -24,41 +24,47 @@ const VeterinariaHome = ({ selectedAgro, onChangeAgroRequest }: Props) => {
       setLoading(true);
 
       try {
-        // 1. Productos disponibles
+        // 1. Productos en convenio
         const { count: prodCount } = await supabase.from('agroveterinaria_productos')
           .select('*', { count: 'exact', head: true })
-          .eq('agroveterinaria_id', selectedAgro.id)
-          .eq('estado', 'activo');
+          .eq('agroveterinaria_id', selectedAgro.id);
 
-        // 2. Servicios disponibles
-        const { count: servDispCount } = await supabase.from('agroveterinaria_servicios')
-          .select('*', { count: 'exact', head: true })
-          .eq('agroveterinaria_id', selectedAgro.id)
-          .eq('estado', 'Activo');
-
-        // 3. Servicios pendientes
-        const { data: servPendData } = await supabase.from('cliente_servicios')
-          .select('id, agroveterinaria_servicios!inner(agroveterinaria_id)')
+        // 2. Servicios Asignados (Pendientes de uso)
+        const { count: servAsignadosCount } = await supabase.from('cliente_servicios')
+          .select('id, agroveterinaria_servicios!inner(agroveterinaria_id)', { count: 'exact', head: true })
           .eq('estado', 'Pendiente')
           .eq('agroveterinaria_servicios.agroveterinaria_id', selectedAgro.id);
 
-        // 4. Beneficios pendientes (Clientes de la localidad - clientes que ya canjearon)
-        const { count: clientesCount } = await supabase.from('clientes')
-          .select('*', { count: 'exact', head: true })
-          .eq('localidad_id', selectedAgro.localidad_id);
-
+        // 3 y 4. Clientes atendidos y Beneficios entregados
+        // canjes
         const { data: canjesData } = await supabase.from('canjes')
-          .select('cliente_dni, clientes!inner(localidad_id)')
-          .eq('clientes.localidad_id', selectedAgro.localidad_id);
+          .select('cliente_dni')
+          .eq('agroveterinaria_id', selectedAgro.id);
           
-        const claimedSet = new Set(canjesData?.map(c => c.cliente_dni));
-        const beneficiosPendientes = Math.max(0, (clientesCount || 0) - claimedSet.size);
+        // servicios utilizados
+        const { data: servUtilizadosData } = await supabase.from('cliente_servicios')
+          .select('cliente_dni, agroveterinaria_servicios!inner(agroveterinaria_id)')
+          .eq('estado', 'Utilizado')
+          .eq('agroveterinaria_servicios.agroveterinaria_id', selectedAgro.id);
+
+        const dnisSet = new Set<string>();
+        let totalEntregados = 0;
+
+        if (canjesData) {
+          canjesData.forEach(c => dnisSet.add(c.cliente_dni));
+          totalEntregados += canjesData.length;
+        }
+        
+        if (servUtilizadosData) {
+          servUtilizadosData.forEach(c => dnisSet.add(c.cliente_dni));
+          totalEntregados += servUtilizadosData.length;
+        }
 
         setStats({
           productosConvenio: prodCount || 0,
-          serviciosDisponibles: servDispCount || 0,
-          serviciosPendientes: servPendData?.length || 0,
-          beneficiosPendientes
+          serviciosAsignados: servAsignadosCount || 0,
+          clientesAtendidos: dnisSet.size,
+          beneficiosEntregados: totalEntregados
         });
       } catch (err) {
         console.error("Error fetching stats:", err);
@@ -125,8 +131,8 @@ const VeterinariaHome = ({ selectedAgro, onChangeAgroRequest }: Props) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
             <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <Package size={18} className="text-blue-500" />
-              <span className="text-xs font-bold uppercase">Prod. en Convenio</span>
+              <Package size={18} className="text-blue-500 shrink-0" />
+              <span className="text-xs font-bold uppercase truncate" title="Productos en Convenio">Productos en Convenio</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">
               {loading ? '...' : stats.productosConvenio}
@@ -134,29 +140,29 @@ const VeterinariaHome = ({ selectedAgro, onChangeAgroRequest }: Props) => {
           </div>
           <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
             <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <ShieldCheck size={18} className="text-purple-500" />
-              <span className="text-xs font-bold uppercase">Servicios Activos</span>
+              <ShieldCheck size={18} className="text-purple-500 shrink-0" />
+              <span className="text-xs font-bold uppercase truncate" title="Servicios Asignados">Servicios Asignados</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.serviciosDisponibles}
+              {loading ? '...' : stats.serviciosAsignados}
             </p>
           </div>
           <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
             <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <Store size={18} className="text-amber-500" />
-              <span className="text-xs font-bold uppercase">Beneficios Pdt.</span>
+              <Users size={18} className="text-amber-500 shrink-0" />
+              <span className="text-xs font-bold uppercase truncate" title="Clientes Atendidos">Clientes Atendidos</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.beneficiosPendientes}
+              {loading ? '...' : stats.clientesAtendidos}
             </p>
           </div>
           <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
             <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <Clock size={18} className="text-emerald-500" />
-              <span className="text-xs font-bold uppercase">Servicios Pdt.</span>
+              <Activity size={18} className="text-emerald-500 shrink-0" />
+              <span className="text-xs font-bold uppercase truncate" title="Beneficios Entregados">Beneficios Entregados</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.serviciosPendientes}
+              {loading ? '...' : stats.beneficiosEntregados}
             </p>
           </div>
         </div>
