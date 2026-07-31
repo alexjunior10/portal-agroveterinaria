@@ -129,41 +129,53 @@ const VeterinariaHome = ({ selectedAgro, onChangeAgroRequest }: Props) => {
           Resumen Operativo
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
-            <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <Package size={18} className="text-blue-500 shrink-0" />
-              <span className="text-xs font-bold uppercase truncate" title="Productos en Convenio">Productos en Convenio</span>
+          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 text-gray-500 mb-2">
+                <Package size={18} className="text-blue-500 shrink-0" />
+                <span className="text-xs font-bold uppercase truncate" title="Productos en Convenio">Productos en Convenio</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {loading ? '...' : stats.productosConvenio}
+              </p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.productosConvenio}
-            </p>
+            <p className="text-[11px] leading-tight text-gray-500 mt-3 pt-3 border-t border-gray-100">Productos con descuento asignados a tu sede.</p>
           </div>
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
-            <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <ShieldCheck size={18} className="text-purple-500 shrink-0" />
-              <span className="text-xs font-bold uppercase truncate" title="Servicios Asignados">Servicios Asignados</span>
+          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 text-gray-500 mb-2">
+                <ShieldCheck size={18} className="text-purple-500 shrink-0" />
+                <span className="text-xs font-bold uppercase truncate" title="Servicios Asignados">Servicios Asignados</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {loading ? '...' : stats.serviciosAsignados}
+              </p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.serviciosAsignados}
-            </p>
+            <p className="text-[11px] leading-tight text-gray-500 mt-3 pt-3 border-t border-gray-100">Citas y servicios pendientes de atención.</p>
           </div>
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
-            <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <Users size={18} className="text-amber-500 shrink-0" />
-              <span className="text-xs font-bold uppercase truncate" title="Clientes Atendidos">Clientes Atendidos</span>
+          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 text-gray-500 mb-2">
+                <Users size={18} className="text-amber-500 shrink-0" />
+                <span className="text-xs font-bold uppercase truncate" title="Clientes Atendidos">Clientes Atendidos</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {loading ? '...' : stats.clientesAtendidos}
+              </p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.clientesAtendidos}
-            </p>
+            <p className="text-[11px] leading-tight text-gray-500 mt-3 pt-3 border-t border-gray-100">Personas que ya recibieron un beneficio aquí.</p>
           </div>
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
-            <div className="flex items-center gap-3 text-gray-500 mb-2">
-              <Activity size={18} className="text-emerald-500 shrink-0" />
-              <span className="text-xs font-bold uppercase truncate" title="Beneficios Entregados">Beneficios Entregados</span>
+          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-soft flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 text-gray-500 mb-2">
+                <Activity size={18} className="text-emerald-500 shrink-0" />
+                <span className="text-xs font-bold uppercase truncate" title="Beneficios Entregados">Beneficios Entregados</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {loading ? '...' : stats.beneficiosEntregados}
+              </p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
-              {loading ? '...' : stats.beneficiosEntregados}
-            </p>
+            <p className="text-[11px] leading-tight text-gray-500 mt-3 pt-3 border-t border-gray-100">Suma total de descuentos y servicios brindados.</p>
           </div>
         </div>
       </div>
