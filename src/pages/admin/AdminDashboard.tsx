@@ -109,6 +109,24 @@ const AdminDashboard = () => {
     .sort((a, b) => b.subtotal - a.subtotal) // Ordenar por monto vendido
     .slice(0, 4); // Top 4 para el grid
 
+  // Calcular Top Veterinarias
+  const agroStats: Record<string, { localidad: string; totalVendido: number }> = {};
+  canjes.forEach(c => {
+    const agroName = c.agroveterinarias?.nombre || 'Desconocida';
+    const locName = c.agroveterinarias?.localidades?.nombre || 'Desconocida';
+    
+    if (!agroStats[agroName]) {
+      agroStats[agroName] = { localidad: locName, totalVendido: 0 };
+    }
+    
+    agroStats[agroName].totalVendido += Number(c.subtotal || c.precio || 0);
+  });
+
+  const topVeterinarias = Object.entries(agroStats)
+    .map(([nombre, stats]) => ({ nombre, ...stats }))
+    .sort((a, b) => b.totalVendido - a.totalVendido)
+    .slice(0, 4);
+
   const exportReporteCompleto = async () => {
     setExporting(true);
     try {
@@ -368,7 +386,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Gráficos BI */}
-      {topProductos.length > 0 && (
+      {(topProductos.length > 0 || topVeterinarias.length > 0) && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="card p-5 border border-gray-100">
             <h3 className="text-sm font-semibold text-textMain mb-4 uppercase tracking-wider text-gray-500">
@@ -391,20 +409,19 @@ const AdminDashboard = () => {
           </div>
           <div className="card p-5 border border-gray-100">
             <h3 className="text-sm font-semibold text-textMain mb-4 uppercase tracking-wider text-gray-500">
-              Top Productos (Cantidad)
+              Top Veterinarias
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {topProductos.map((p, idx) => (
+              {topVeterinarias.map((v, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-100 flex flex-col justify-between">
-                  <span className="text-sm font-medium text-andes-dark truncate" title={p.nombre}>{p.nombre}</span>
+                  <div>
+                    <span className="text-sm font-medium text-andes-dark truncate block" title={v.nombre}>{v.nombre}</span>
+                    <span className="text-xs text-gray-500 truncate block" title={v.localidad}>{v.localidad}</span>
+                  </div>
                   <div className="mt-3 flex justify-between items-end">
                     <div>
                       <div className="text-xs text-gray-400 mb-1">Vendido</div>
-                      <div className="text-lg font-bold text-andes">S/ {p.subtotal.toFixed(2)}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xs text-gray-400 mb-1">Cantidad</div>
-                      <div className="text-lg font-bold text-gray-700">{p.cantidad}</div>
+                      <div className="text-lg font-bold text-andes">S/ {v.totalVendido.toFixed(2)}</div>
                     </div>
                   </div>
                 </div>
