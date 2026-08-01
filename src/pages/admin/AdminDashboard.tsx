@@ -109,22 +109,22 @@ const AdminDashboard = () => {
     .sort((a, b) => b.subtotal - a.subtotal) // Ordenar por monto vendido
     .slice(0, 4); // Top 4 para el grid
 
-  // Calcular Top Veterinarias
-  const agroStats: Record<string, { localidad: string; totalVendido: number }> = {};
+  // Calcular Top Veterinarias (Por Ahorro Generado / Descuentos)
+  const agroStats: Record<string, { localidad: string; totalDescuento: number }> = {};
   canjes.forEach(c => {
     const agroName = c.agroveterinarias?.nombre || 'Desconocida';
     const locName = c.agroveterinarias?.localidades?.nombre || 'Desconocida';
     
     if (!agroStats[agroName]) {
-      agroStats[agroName] = { localidad: locName, totalVendido: 0 };
+      agroStats[agroName] = { localidad: locName, totalDescuento: 0 };
     }
     
-    agroStats[agroName].totalVendido += Number(c.subtotal || c.precio || 0);
+    agroStats[agroName].totalDescuento += Number(c.monto_descontado || 0);
   });
 
   const topVeterinarias = Object.entries(agroStats)
     .map(([nombre, stats]) => ({ nombre, ...stats }))
-    .sort((a, b) => b.totalVendido - a.totalVendido)
+    .sort((a, b) => b.totalDescuento - a.totalDescuento)
     .slice(0, 4);
 
   const exportReporteCompleto = async () => {
@@ -420,8 +420,8 @@ const AdminDashboard = () => {
                   </div>
                   <div className="mt-3 flex justify-between items-end">
                     <div>
-                      <div className="text-xs text-gray-400 mb-1">Vendido</div>
-                      <div className="text-lg font-bold text-andes">S/ {v.totalVendido.toFixed(2)}</div>
+                      <div className="text-xs text-gray-400 mb-1">Ahorro Generado</div>
+                      <div className="text-lg font-bold text-andes">S/ {v.totalDescuento.toFixed(2)}</div>
                     </div>
                   </div>
                 </div>
