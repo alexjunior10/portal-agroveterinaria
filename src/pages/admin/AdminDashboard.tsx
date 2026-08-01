@@ -409,7 +409,7 @@ const AdminDashboard = () => {
           </div>
           <div className="card p-5 border border-gray-100">
             <h3 className="text-sm font-semibold text-textMain mb-4 uppercase tracking-wider text-gray-500">
-              Top Veterinarias
+              Top Veterinarias (Ahorro Generado)
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {topVeterinarias.map((v, idx) => (
