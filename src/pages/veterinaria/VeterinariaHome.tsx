@@ -286,7 +286,7 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
                       <p className="text-gray-500 flex items-center gap-2">
                         <span className="font-mono text-sm">DNI: {cliente.dni}</span>
                         <span>•</span>
-                        <span className="flex items-center gap-1 text-sm"><MapPin size={14}/> {cliente.localidades?.nombre}</span>
+                        <span className="flex items-center gap-1 text-sm"><MapPin size={14}/> {(cliente as any).localidades?.nombre}</span>
                       </p>
                     </div>
                   </div>
