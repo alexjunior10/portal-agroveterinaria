@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Package, ShieldCheck, CheckCircle2, Clock, AlertCircle, ChevronRight, Activity, CalendarDays } from 'lucide-react';
+import { Search, MapPin, Package, ShieldCheck, CheckCircle2, Clock, AlertCircle, ChevronRight, CalendarDays, History } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Cliente } from '../../types';
 import toast from 'react-hot-toast';
@@ -20,7 +20,7 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
   // Client Data
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
-  const [beneficioProducto, setBeneficioProducto] = useState<{ estado: 'Pendiente' | 'Utilizado', fecha?: string } | null>(null);
+  const [beneficiosProducto, setBeneficiosProducto] = useState<any[]>([]);
   const [servicios, setServicios] = useState<any[]>([]);
 
   // Execute Search
@@ -36,7 +36,7 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
     setSearchAttempted(true);
     setStatusError(null);
     setCliente(null);
-    setBeneficioProducto(null);
+    setBeneficiosProducto([]);
     setServicios([]);
 
     try {
@@ -54,7 +54,7 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
       }
       setCliente(clienteData as Cliente);
 
-      // 2. Verificar Beneficio de Productos (Canjes)
+      // 2. Verificar Beneficios de Productos (Canjes)
       const { data: canjeData } = await supabase
         .from('canjes')
         .select('id, fecha')
@@ -62,10 +62,22 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
         .is('producto_id', null)
         .maybeSingle();
 
+      // Convertimos el beneficio general a un array para que sea escalable (como pediste)
       if (canjeData) {
-        setBeneficioProducto({ estado: 'Utilizado', fecha: canjeData.fecha });
+        setBeneficiosProducto([{ 
+          id: canjeData.id, 
+          nombre: 'Descuento General Convenio', 
+          descripcion: 'Aplica descuento porcentual en compras seleccionadas.',
+          estado: 'Utilizado', 
+          fecha: canjeData.fecha 
+        }]);
       } else {
-        setBeneficioProducto({ estado: 'Pendiente' });
+        setBeneficiosProducto([{ 
+          id: 'desc-gen', 
+          nombre: 'Descuento General Convenio', 
+          descripcion: 'Aplica descuento porcentual en compras seleccionadas.',
+          estado: 'Pendiente' 
+        }]);
       }
 
       // 3. Verificar Servicios Veterinarios
@@ -96,27 +108,30 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
     }
   };
 
-  // Metrics for Resumen de Atención
-  const numProductosDisponibles = beneficioProducto?.estado === 'Pendiente' ? 1 : 0;
+  // Metrics for Resumen
+  const numProductosDisponibles = beneficiosProducto.filter(b => b.estado === 'Pendiente').length;
   const numServiciosDisponibles = servicios.filter(s => s.estado === 'Pendiente' || s.estado === 'Reservado').length;
-  const numBeneficiosUtilizados = (beneficioProducto?.estado === 'Utilizado' ? 1 : 0) + servicios.filter(s => s.estado === 'Utilizado').length;
+  const numBeneficiosUtilizados = beneficiosProducto.filter(b => b.estado === 'Utilizado').length + servicios.filter(s => s.estado === 'Utilizado').length;
   
-  // Find latest date of usage
-  let ultimaAtencion = null;
-  const fechasAtencion = [];
-  if (beneficioProducto?.fecha) fechasAtencion.push(new Date(beneficioProducto.fecha));
-  servicios.filter(s => s.estado === 'Utilizado' && s.fecha_utilizacion).forEach(s => fechasAtencion.push(new Date(s.fecha_utilizacion)));
+  // Historial Reciente (ordenado por fecha)
+  const historialRaw: { nombre: string; fecha: Date; tipo: string }[] = [];
   
-  if (fechasAtencion.length > 0) {
-    ultimaAtencion = new Date(Math.max(...fechasAtencion.map(e => e.getTime())));
-  }
+  beneficiosProducto.filter(b => b.estado === 'Utilizado' && b.fecha).forEach(b => {
+    historialRaw.push({ nombre: b.nombre, fecha: new Date(b.fecha), tipo: 'Producto' });
+  });
+  
+  servicios.filter(s => s.estado === 'Utilizado' && s.fecha_utilizacion).forEach(s => {
+    historialRaw.push({ nombre: s.agroveterinaria_servicios?.servicios?.nombre || 'Servicio', fecha: new Date(s.fecha_utilizacion), tipo: 'Servicio' });
+  });
 
-  const hasAnyBenefits = beneficioProducto !== null || servicios.length > 0;
+  const historial = historialRaw.sort((a, b) => b.fecha.getTime() - a.fecha.getTime()).slice(0, 3);
+  const ultimaAtencion = historial.length > 0 ? historial[0].fecha : null;
+  const hasAnyBenefits = beneficiosProducto.length > 0 || servicios.length > 0;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300 max-w-6xl mx-auto pb-12">
+    <div className="space-y-8 animate-in fade-in duration-300 max-w-7xl mx-auto pb-12">
       
-      {/* 1. Hero Institucional (Recuperado) */}
+      {/* 1. Banner Institucional */}
       <div className="relative rounded-3xl overflow-hidden shadow-lg bg-andes-dark min-h-[260px] flex flex-col justify-center border border-white/10">
         <div className="absolute inset-0 z-0">
           <img 
@@ -185,7 +200,7 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
 
       {/* Resultados de la Búsqueda */}
       {searchAttempted && !isSearching && (
-        <div className="animate-in slide-in-from-bottom-8 duration-500 fade-in px-2">
+        <div className="animate-in slide-in-from-bottom-8 duration-500 fade-in px-2 md:px-4">
           
           {/* Cliente no encontrado */}
           {statusError === 'not_found' && (
@@ -200,15 +215,16 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
 
           {/* Ficha del Cliente (CRM) */}
           {!statusError && cliente && (
-            <div className="space-y-8 max-w-5xl mx-auto">
+            <div className="space-y-6 max-w-6xl mx-auto">
               
-              {/* 3. Ficha Principal del Cliente */}
-              <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-2 h-full bg-andes"></div>
+              {/* 3. Tarjeta del Cliente y Resumen/Historial */}
+              <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden relative flex flex-col lg:flex-row">
+                <div className="absolute top-0 left-0 w-2 h-full bg-andes hidden lg:block"></div>
+                <div className="absolute top-0 left-0 w-full h-2 bg-andes lg:hidden"></div>
                 
-                <div className="p-8 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                  {/* Datos Personales Destacados */}
-                  <div className="flex-1">
+                {/* Datos y KPIs de Cliente */}
+                <div className="p-8 lg:p-10 flex-1 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col justify-between">
+                  <div>
                     <div className="flex items-center gap-3 mb-3">
                       <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[11px] font-bold tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">
                         <CheckCircle2 size={12} strokeWidth={3} /> Validado
@@ -220,7 +236,7 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
                       {cliente.nombre}
                     </h2>
                     
-                    <div className="flex flex-wrap items-center gap-6 text-gray-600 font-medium">
+                    <div className="flex flex-wrap items-center gap-6 text-gray-600 font-medium mb-8">
                       <div className="flex items-center gap-2">
                         <div className="bg-gray-100 p-1.5 rounded-md"><AlertCircle size={16} className="text-gray-500" /></div>
                         <span>DNI: <span className="text-gray-900">{cliente.dni}</span></span>
@@ -232,160 +248,200 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
                     </div>
                   </div>
 
-                  {/* Resumen de Atención Integrado */}
-                  <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-100 min-w-[280px]">
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <Activity size={14} /> Resumen de Beneficios
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span className="text-gray-600 text-sm font-medium">Disponibles</span>
-                        <div className="flex gap-2 text-xs font-bold text-gray-900">
-                          <span className="bg-white border border-gray-200 px-2 py-1 rounded shadow-sm flex items-center gap-1" title="Productos"><Package size={12} className="text-blue-500"/> {numProductosDisponibles}</span>
-                          <span className="bg-white border border-gray-200 px-2 py-1 rounded shadow-sm flex items-center gap-1" title="Servicios"><ShieldCheck size={12} className="text-purple-500"/> {numServiciosDisponibles}</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span className="text-gray-600 text-sm font-medium">Utilizados</span>
-                        <span className="font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-md">{numBeneficiosUtilizados}</span>
-                      </div>
-                      <div className="flex justify-between items-center pt-1">
-                        <span className="text-gray-500 text-xs">Última atención</span>
-                        <span className="text-gray-800 font-semibold text-xs">
-                          {ultimaAtencion ? ultimaAtencion.toLocaleDateString('es-PE') : 'Sin historial'}
-                        </span>
-                      </div>
+                  {/* Resumen en Fila */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                    <div>
+                      <p className="text-xs text-gray-500 font-semibold mb-1">Productos Disp.</p>
+                      <p className="text-xl font-bold text-gray-900">{numProductosDisponibles}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-semibold mb-1">Servicios Disp.</p>
+                      <p className="text-xl font-bold text-gray-900">{numServiciosDisponibles}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-semibold mb-1">Beneficios Usados</p>
+                      <p className="text-xl font-bold text-emerald-600">{numBeneficiosUtilizados}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-semibold mb-1">Última Atención</p>
+                      <p className="text-sm font-bold text-gray-900 mt-1">{ultimaAtencion ? ultimaAtencion.toLocaleDateString('es-PE') : '-'}</p>
                     </div>
                   </div>
+                </div>
+
+                {/* Historial Reciente */}
+                <div className="bg-white p-8 lg:p-10 lg:w-96 shrink-0 flex flex-col">
+                  <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <History size={16} className="text-andes" /> Últimas Atenciones
+                  </h3>
+                  
+                  {historial.length > 0 ? (
+                    <div className="space-y-5 flex-1">
+                      {historial.map((h, i) => (
+                        <div key={i} className="flex gap-4 relative">
+                          {i !== historial.length -1 && (
+                            <div className="absolute left-4 top-8 bottom-[-20px] w-0.5 bg-gray-100"></div>
+                          )}
+                          <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 z-10">
+                            <CheckCircle2 size={16} strokeWidth={3} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">{h.nombre}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs text-gray-500">{h.fecha.toLocaleDateString('es-PE')}</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 uppercase tracking-wider">{h.tipo}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
+                      <Clock size={32} className="text-gray-300 mb-3" />
+                      <p className="text-sm text-gray-500 font-medium">Este cliente aún no registra atenciones dentro del programa.</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Si no tiene absolutamente ningún beneficio */}
               {!hasAnyBenefits && (
-                 <div className="bg-gray-50 rounded-3xl border border-gray-200 p-12 text-center border-dashed">
+                 <div className="bg-gray-50 rounded-3xl border border-gray-200 p-12 text-center border-dashed mt-8">
                    <AlertCircle size={40} className="text-gray-400 mx-auto mb-4" />
-                   <h3 className="text-xl font-bold text-gray-800 mb-2">Sin beneficios vigentes</h3>
-                   <p className="text-gray-500">Este cliente no cuenta con beneficios o promociones disponibles para esta sede en este momento.</p>
+                   <h3 className="text-xl font-bold text-gray-800 mb-2">Este cliente actualmente no posee beneficios vigentes dentro del programa.</h3>
                  </div>
               )}
 
-              {/* 4. Bloque Beneficios de Productos */}
-              {beneficioProducto && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 pl-2">
-                    <Package className="text-blue-600" size={24} /> Productos en Convenio
-                  </h3>
+              {/* 4. Grid de Beneficios (2 Columnas) */}
+              {hasAnyBenefits && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Tarjeta de Beneficio CRM Style */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow group flex flex-col justify-between min-h-[160px]">
-                      <div>
-                        <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-bold text-gray-900 text-lg">Descuento General Convenio</h4>
-                          {beneficioProducto.estado === 'Pendiente' ? (
-                            <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> PENDIENTE
-                            </span>
-                          ) : (
-                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5">
-                              <CheckCircle2 size={12} strokeWidth={3} /> UTILIZADO
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-500 mb-4">Aplica un descuento porcentual exclusivo en compras de productos seleccionados de esta sede.</p>
-                        <div className="flex items-center gap-2 text-xs font-medium text-gray-400 mb-6">
-                          <CalendarDays size={14} /> Vigencia: 31/12/2026
-                        </div>
-                      </div>
-                      
-                      <div className="mt-auto">
-                        {beneficioProducto.estado === 'Pendiente' ? (
-                          <button 
-                            onClick={() => navigate('/veterinaria/productos', { state: { dni: searchDni } })}
-                            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-andes hover:bg-andes-dark text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm"
-                          >
-                            Canjear beneficio <ChevronRight size={16} />
-                          </button>
-                        ) : (
-                          <div className="bg-gray-50 text-gray-500 text-sm font-medium px-4 py-2.5 rounded-xl text-center border border-gray-100">
-                            Beneficio ya canjeado
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 5. Bloque Servicios Veterinarios */}
-              {servicios.length > 0 && (
-                <div className="space-y-4 pt-4">
-                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 pl-2">
-                    <ShieldCheck className="text-purple-600" size={24} /> Servicios Veterinarios
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {servicios.map((s, idx) => {
-                      const srvName = s.agroveterinaria_servicios?.servicios?.nombre || 'Servicio Desconocido';
-                      
-                      let badgeUI = <span className="bg-gray-50 text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide">DESCONOCIDO</span>;
-                      
-                      if (s.estado === 'Pendiente') {
-                        badgeUI = (
-                          <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> PENDIENTE
-                          </span>
-                        );
-                      } else if (s.estado === 'Reservado') {
-                        badgeUI = (
-                          <span className="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span> RESERVADO
-                          </span>
-                        );
-                      } else if (s.estado === 'Utilizado') {
-                        badgeUI = (
-                          <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5">
-                            <CheckCircle2 size={12} strokeWidth={3} /> UTILIZADO
-                          </span>
-                        );
-                      } else if (s.estado === 'Vencido') {
-                        badgeUI = (
-                          <span className="bg-gray-100 text-gray-500 border border-gray-300 px-3 py-1 rounded-full text-xs font-bold tracking-wide">
-                            VENCIDO
-                          </span>
-                        );
-                      }
-
-                      return (
-                        <div key={s.id || idx} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow group flex flex-col justify-between min-h-[160px]">
+                  {/* Columna Productos */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 pl-2">
+                      <Package className="text-blue-600" size={24} /> Productos
+                    </h3>
+                    
+                    {beneficiosProducto.length > 0 ? (
+                      beneficiosProducto.map((bp) => (
+                        <div key={bp.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow group flex flex-col justify-between min-h-[160px]">
                           <div>
                             <div className="flex justify-between items-start mb-3">
-                              <h4 className="font-bold text-gray-900 text-lg">{srvName}</h4>
-                              {badgeUI}
+                              <h4 className="font-bold text-gray-900 text-lg">{bp.nombre}</h4>
+                              {bp.estado === 'Pendiente' ? (
+                                <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5 shrink-0 ml-2">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> PENDIENTE
+                                </span>
+                              ) : (
+                                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5 shrink-0 ml-2">
+                                  <CheckCircle2 size={12} strokeWidth={3} /> UTILIZADO
+                                </span>
+                              )}
                             </div>
-                            <p className="text-sm text-gray-500 mb-4">Cobertura total o parcial de atención veterinaria según el plan asignado.</p>
+                            <p className="text-sm text-gray-500 mb-4">{bp.descripcion}</p>
                             <div className="flex items-center gap-2 text-xs font-medium text-gray-400 mb-6">
-                              <CalendarDays size={14} /> Asignado: {new Date(s.fecha_asignacion).toLocaleDateString('es-PE')}
+                              <CalendarDays size={14} /> Vigencia: 31/12/2026
                             </div>
                           </div>
                           
                           <div className="mt-auto">
-                            {(s.estado === 'Pendiente' || s.estado === 'Reservado') ? (
+                            {bp.estado === 'Pendiente' ? (
                               <button 
-                                onClick={() => navigate('/veterinaria/servicios', { state: { dni: searchDni } })}
-                                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm"
+                                onClick={() => navigate('/veterinaria/productos', { state: { dni: searchDni } })}
+                                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-andes hover:bg-andes-dark text-white px-6 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm"
                               >
-                                Registrar atención <ChevronRight size={16} />
+                                Canjear beneficio <ChevronRight size={16} />
                               </button>
                             ) : (
-                              <div className="bg-gray-50 text-gray-500 text-sm font-medium px-4 py-2.5 rounded-xl text-center border border-gray-100">
-                                {s.estado === 'Utilizado' ? 'Atención ya registrada' : 'Beneficio vencido'}
+                              <div className="bg-gray-50 text-gray-500 text-sm font-medium px-4 py-2.5 rounded-xl text-left border border-gray-100 flex items-center gap-2">
+                                <CheckCircle2 size={16} className="text-emerald-500" /> Beneficio ya canjeado
                               </div>
                             )}
                           </div>
                         </div>
-                      );
-                    })}
+                      ))
+                    ) : (
+                      <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 text-center border-dashed h-full flex flex-col items-center justify-center">
+                        <Package size={32} className="text-gray-300 mb-3" />
+                        <p className="text-gray-500 font-medium">Este cliente actualmente no tiene beneficios de productos disponibles.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Columna Servicios */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 pl-2">
+                      <ShieldCheck className="text-purple-600" size={24} /> Servicios Veterinarios
+                    </h3>
+                    
+                    {servicios.length > 0 ? (
+                      servicios.map((s, idx) => {
+                        const srvName = s.agroveterinaria_servicios?.servicios?.nombre || 'Servicio Desconocido';
+                        
+                        let badgeUI = <span className="bg-gray-50 text-gray-600 border border-gray-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide shrink-0 ml-2">DESCONOCIDO</span>;
+                        
+                        if (s.estado === 'Pendiente') {
+                          badgeUI = (
+                            <span className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5 shrink-0 ml-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> PENDIENTE
+                            </span>
+                          );
+                        } else if (s.estado === 'Reservado') {
+                          badgeUI = (
+                            <span className="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5 shrink-0 ml-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span> RESERVADO
+                            </span>
+                          );
+                        } else if (s.estado === 'Utilizado') {
+                          badgeUI = (
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide flex items-center gap-1.5 shrink-0 ml-2">
+                              <CheckCircle2 size={12} strokeWidth={3} /> UTILIZADO
+                            </span>
+                          );
+                        } else if (s.estado === 'Vencido') {
+                          badgeUI = (
+                            <span className="bg-gray-100 text-gray-500 border border-gray-300 px-3 py-1 rounded-full text-xs font-bold tracking-wide shrink-0 ml-2">
+                              VENCIDO
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <div key={s.id || idx} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow group flex flex-col justify-between min-h-[160px]">
+                            <div>
+                              <div className="flex justify-between items-start mb-3">
+                                <h4 className="font-bold text-gray-900 text-lg">{srvName}</h4>
+                                {badgeUI}
+                              </div>
+                              <p className="text-sm text-gray-500 mb-4">Cobertura total o parcial de atención veterinaria según el plan asignado.</p>
+                              <div className="flex items-center gap-2 text-xs font-medium text-gray-400 mb-6">
+                                <CalendarDays size={14} /> Asignado: {new Date(s.fecha_asignacion).toLocaleDateString('es-PE')}
+                              </div>
+                            </div>
+                            
+                            <div className="mt-auto">
+                              {(s.estado === 'Pendiente' || s.estado === 'Reservado') ? (
+                                <button 
+                                  onClick={() => navigate('/veterinaria/servicios', { state: { dni: searchDni } })}
+                                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm"
+                                >
+                                  Registrar atención <ChevronRight size={16} />
+                                </button>
+                              ) : (
+                                <div className="bg-gray-50 text-gray-500 text-sm font-medium px-4 py-2.5 rounded-xl text-left border border-gray-100 flex items-center gap-2">
+                                  <CheckCircle2 size={16} className="text-gray-400" /> {s.estado === 'Utilizado' ? 'Atención ya registrada' : 'Beneficio vencido'}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 text-center border-dashed h-full flex flex-col items-center justify-center">
+                        <ShieldCheck size={32} className="text-gray-300 mb-3" />
+                        <p className="text-gray-500 font-medium">Este cliente actualmente no tiene servicios veterinarios asignados.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
