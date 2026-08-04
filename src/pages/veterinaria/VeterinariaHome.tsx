@@ -24,9 +24,12 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
   const [servicios, setServicios] = useState<any[]>([]);
 
   // Execute Search
-  const handleSearch = async (e?: React.FormEvent) => {
+  const handleSearch = async (e?: React.FormEvent, dniToSearch?: string) => {
     if (e) e.preventDefault();
-    if (!searchDni.trim()) return;
+    
+    const targetDni = (dniToSearch || searchDni).trim();
+    if (!targetDni) return;
+    
     if (!selectedAgro) {
       toast.error('Seleccione un punto de atención');
       return;
@@ -40,11 +43,14 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
     setServicios([]);
 
     try {
+      // Guardar en sessionStorage para persistencia de navegacion
+      sessionStorage.setItem('veterinaria_last_dni', targetDni);
+
       // 1. Buscar Cliente
       const { data: clienteData, error: clientErr } = await supabase
         .from('clientes')
         .select('*, localidades(nombre)')
-        .eq('dni', searchDni.trim())
+        .eq('dni', targetDni)
         .single();
 
       if (clientErr || !clienteData) {
@@ -107,6 +113,17 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
       setIsSearching(false);
     }
   };
+
+  // Restore last search from memory
+  useEffect(() => {
+    if (selectedAgro) {
+      const lastDni = sessionStorage.getItem('veterinaria_last_dni');
+      if (lastDni && !cliente && !isSearching && !searchAttempted) {
+        setSearchDni(lastDni);
+        handleSearch(undefined, lastDni);
+      }
+    }
+  }, [selectedAgro]);
 
   // Metrics for Resumen
   const numProductosDisponibles = beneficiosProducto.filter(b => b.estado === 'Pendiente').length;
