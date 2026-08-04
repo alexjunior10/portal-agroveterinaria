@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Store, Stethoscope, Users, Home as HomeIcon, MapPin, Menu, X, Loader2 } from 'lucide-react';
+import { Store, Stethoscope, Users, Home as HomeIcon, MapPin, Menu, X, Loader2, History } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Agroveterinaria } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -9,6 +9,7 @@ import VeterinariaHome from './VeterinariaHome';
 import VeterinariaProductos from './VeterinariaProductos';
 import VeterinariaServicios from './VeterinariaServicios';
 import VeterinariaReferidos from './VeterinariaReferidos';
+import VeterinariaHistorial from './VeterinariaHistorial';
 
 type AgroveterinariaConLocalidad = Agroveterinaria & { localidades?: { nombre: string } };
 
@@ -53,6 +54,7 @@ const VeterinariaPage = () => {
     if (path.includes('productos')) return 'Beneficios por Productos';
     if (path.includes('servicios')) return 'Servicios Veterinarios';
     if (path.includes('referidos')) return 'Programa de Referidos';
+    if (path.includes('historial')) return 'Historial de Operaciones';
     return 'Inicio';
   };
 
@@ -140,6 +142,14 @@ const VeterinariaPage = () => {
             <Users size={20} />
             Programa Referidos
           </NavLink>
+          <NavLink 
+            to="/veterinaria/historial" 
+            onClick={() => setSidebarOpen(false)}
+            className={({isActive}) => `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-andes text-white font-medium shadow-soft' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`}
+          >
+            <History size={20} />
+            Historial
+          </NavLink>
         </nav>
 
         {/* Botón Salir */}
@@ -199,6 +209,7 @@ const VeterinariaPage = () => {
               <Route path="/productos" element={<VeterinariaProductos selectedAgroId={agroveterinariaId} />} />
               <Route path="/servicios" element={<VeterinariaServicios selectedAgroId={agroveterinariaId} />} />
               <Route path="/referidos" element={<VeterinariaReferidos selectedAgroId={agroveterinariaId} />} />
+              <Route path="/historial" element={<VeterinariaHistorial selectedAgroId={agroveterinariaId} />} />
             </Routes>
           )}
         </div>
