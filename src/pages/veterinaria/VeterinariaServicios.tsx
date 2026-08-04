@@ -120,16 +120,20 @@ const VeterinariaServicios = ({ selectedAgroId }: Props) => {
     setConfirmServiceModal(null);
     
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('cliente_servicios')
         .update({
           estado: 'Utilizado',
           fecha_utilizacion: new Date().toISOString(),
           usuario_atencion: 'Veterinaria'
         })
-        .eq('id', servicioId);
+        .eq('id', servicioId)
+        .select();
         
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error("La base de datos bloqueó la actualización (0 filas afectadas). Posible problema de permisos RLS o la sesión ha expirado.");
+      }
       
       setServiceSuccessIds(prev => [...prev, servicioId]);
       
