@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Search, CheckCircle2, AlertCircle, AlertTriangle, RefreshCw, XCircle, Plus, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -44,9 +45,16 @@ const VeterinariaProductos = ({ selectedAgroId }: Props) => {
 
   const [confirmProductModal, setConfirmProductModal] = useState(false);
 
-  const { register: registerSearch, handleSubmit: handleSearchSubmit, formState: { errors: errorsSearch } } = useForm<SearchForm>();
+  const { register: registerSearch, handleSubmit: handleSearchSubmit, formState: { errors: errorsSearch }, setValue } = useForm<SearchForm>();
+  const location = useLocation();
 
-
+  useEffect(() => {
+    if (location.state?.dni && selectedAgroId) {
+      setValue('dni', location.state.dni);
+      onSearch({ dni: location.state.dni });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, selectedAgroId]);
 
   // 2. Buscar Cliente
   const onSearch = async (data: SearchForm) => {
