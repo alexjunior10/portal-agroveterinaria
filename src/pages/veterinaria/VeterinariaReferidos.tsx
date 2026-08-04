@@ -21,16 +21,12 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
   const [agroveterinaria, setAgroveterinaria] = useState<any>(null);
   const [referidos, setReferidos] = useState<any[]>([]);
   
-  // Form state
   const [referidoForm, setReferidoForm] = useState({
-    dni: '',
-    nombre: '',
-    monto: ''
+    dni: ''
   });
   
   // Visibility toggles
   const [showDni, setShowDni] = useState(false);
-  const [showNombre, setShowNombre] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -66,8 +62,8 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
   };
 
   const handleRegister = async () => {
-    if (!referidoForm.dni || !referidoForm.monto) {
-      toast.error("Por favor ingrese al menos el DNI y el Monto.");
+    if (!referidoForm.dni) {
+      toast.error("Por favor ingrese el DNI del cliente.");
       return;
     }
 
@@ -78,11 +74,11 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
         .insert({
           agroveterinaria_id: selectedAgroId,
           referido_dni: referidoForm.dni,
-          referido_nombre: referidoForm.nombre || 'No registrado',
+          referido_nombre: 'No registrado',
           referido_celular: '',
           referido_distrito: '',
           referido_localidad: '',
-          monto_aproximado: parseFloat(referidoForm.monto)
+          monto_aproximado: 0
         });
 
       if (error) throw error;
@@ -101,12 +97,9 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
 
   const resetForm = () => {
     setReferidoForm({
-      dni: '',
-      nombre: '',
-      monto: ''
+      dni: ''
     });
     setShowDni(false);
-    setShowNombre(false);
     setShowSuccessModal(false);
   };
 
@@ -116,7 +109,7 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
 
   const kpis = {
     total: referidos.length,
-    pendientes: referidos.filter(r => r.estado === 'Pendiente de envío').length,
+    pendientes: referidos.filter(r => r.estado === 'Pendiente de envío' || r.estado === 'Registrado').length,
     desembolsados: referidos.filter(r => r.estado === 'Desembolsado').length
   };
 
@@ -147,7 +140,7 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
           <div className="absolute right-0 top-0 w-16 h-16 bg-amber-50 rounded-bl-full opacity-50 group-hover:scale-110 transition-transform"></div>
           <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <Clock size={14} className="text-amber-500" />
-            Pendientes
+            Registrados
           </span>
           <span className="text-2xl font-bold text-gray-900">{kpis.pendientes}</span>
         </div>
@@ -198,40 +191,12 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
                     </button>
                   </div>
                 </div>
-                
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Nombre Completo (Opcional)</label>
-                  <div className="relative">
-                    <input 
-                      type={showNombre ? "text" : "password"}
-                      value={referidoForm.nombre}
-                      onChange={(e) => setReferidoForm({...referidoForm, nombre: e.target.value})}
-                      className="w-full px-3 py-2 pr-10 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-andes focus:border-andes outline-none"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setShowNombre(!showNombre)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                    >
-                      {showNombre ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Monto Solicitado (S/) *</label>
-                  <input 
-                    type="number" 
-                    value={referidoForm.monto}
-                    onChange={(e) => setReferidoForm({...referidoForm, monto: e.target.value})}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-andes focus:border-andes outline-none font-bold text-andes-dark"
-                  />
                 </div>
               </div>
               
               <button 
                 onClick={handleRegister}
-                disabled={isSubmitting || !referidoForm.dni || !referidoForm.monto}
+                disabled={isSubmitting || !referidoForm.dni || referidoForm.dni.length < 8}
                 className="mt-6 w-full bg-andes hover:bg-andes-dark disabled:bg-gray-300 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
               >
                 {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
@@ -254,7 +219,6 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
                   <tr>
                     <th className="px-6 py-3 font-semibold">Fecha</th>
                     <th className="px-6 py-3 font-semibold">Cliente Referido</th>
-                    <th className="px-6 py-3 font-semibold text-right">Monto Aprox.</th>
                     <th className="px-6 py-3 font-semibold text-center">Estado</th>
                   </tr>
                 </thead>
@@ -272,29 +236,19 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
                           {new Date(ref.fecha_registro).toLocaleDateString('es-PE')}
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-medium text-gray-900 truncate max-w-[200px]">
-                            {/* Mask name unless it's "No registrado" */}
-                            {ref.referido_nombre !== 'No registrado' 
-                              ? '*'.repeat(Math.min(8, ref.referido_nombre.length)) + '...'
-                              : 'No registrado'
-                            }
+                          <p className="font-bold text-gray-900 text-lg">
+                            {ref.referido_dni}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            DNI: {'*'.repeat(ref.referido_dni.length - 3) + ref.referido_dni.slice(-3)}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4 text-right font-bold text-gray-900">
-                          S/ {Number(ref.monto_aproximado).toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
                             ${ref.estado === 'Desembolsado' ? 'bg-green-100 text-green-700' :
-                              ref.estado === 'Pendiente de envío' ? 'bg-amber-100 text-amber-700' :
+                              (ref.estado === 'Pendiente de envío' || ref.estado === 'Registrado') ? 'bg-blue-100 text-blue-700' :
                               ref.estado === 'No aprobado' ? 'bg-red-100 text-red-700' :
-                              'bg-blue-100 text-blue-700'
+                              'bg-gray-100 text-gray-700'
                             }
                           `}>
-                            {ref.estado}
+                            {ref.estado === 'Pendiente de envío' ? 'Registrado' : ref.estado}
                           </span>
                         </td>
                       </tr>
