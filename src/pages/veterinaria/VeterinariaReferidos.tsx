@@ -140,7 +140,7 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
           <div className="absolute right-0 top-0 w-16 h-16 bg-amber-50 rounded-bl-full opacity-50 group-hover:scale-110 transition-transform"></div>
           <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <Clock size={14} className="text-amber-500" />
-            Registrados
+            En Evaluación
           </span>
           <span className="text-2xl font-bold text-gray-900">{kpis.pendientes}</span>
         </div>
@@ -242,12 +242,12 @@ export default function VeterinariaReferidos({ selectedAgroId }: VeterinariaRefe
                         <td className="px-6 py-4 text-center">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
                             ${ref.estado === 'Desembolsado' ? 'bg-green-100 text-green-700' :
-                              (ref.estado === 'Pendiente de envío' || ref.estado === 'Registrado') ? 'bg-blue-100 text-blue-700' :
+                              (ref.estado === 'Pendiente de envío' || ref.estado === 'Registrado' || ref.estado === 'En Evaluación') ? 'bg-blue-100 text-blue-700' :
                               ref.estado === 'No aprobado' ? 'bg-red-100 text-red-700' :
                               'bg-gray-100 text-gray-700'
                             }
                           `}>
-                            {ref.estado === 'Pendiente de envío' ? 'Registrado' : ref.estado}
+                            {ref.estado === 'Pendiente de envío' || ref.estado === 'Registrado' ? 'En Evaluación' : ref.estado}
                           </span>
                         </td>
                       </tr>
