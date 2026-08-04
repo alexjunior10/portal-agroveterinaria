@@ -112,7 +112,10 @@ const VeterinariaPage = () => {
           <NavLink 
             to="/veterinaria" 
             end
-            onClick={() => setSidebarOpen(false)}
+            onClick={() => {
+              sessionStorage.removeItem('veterinaria_last_dni');
+              setSidebarOpen(false);
+            }}
             className={({isActive}) => `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-andes text-white font-medium shadow-soft' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`}
           >
             <HomeIcon size={20} />
