@@ -209,9 +209,10 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
               placeholder="Buscar cliente por DNI..."
               value={searchDni}
               onChange={(e) => {
-                setSearchDni(e.target.value);
-                if (e.target.value.trim() === '') {
-                  sessionStorage.removeItem('veterinaria_last_dni');
+                const val = e.target.value;
+                setSearchDni(val);
+                if (val.trim() === '') {
+                  handleClear();
                 }
               }}
               disabled={isSearching}
