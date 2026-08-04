@@ -114,6 +114,16 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
     }
   };
 
+  const handleClear = () => {
+    setSearchDni('');
+    setCliente(null);
+    setSearchAttempted(false);
+    setStatusError(null);
+    setBeneficiosProducto([]);
+    setServicios([]);
+    sessionStorage.removeItem('veterinaria_last_dni');
+  };
+
   // Restore last search from memory
   useEffect(() => {
     if (selectedAgro) {
@@ -198,11 +208,25 @@ export default function VeterinariaHome({ selectedAgro }: Props) {
               className="flex-1 w-full py-4 text-xl font-medium text-gray-800 placeholder:text-gray-400 placeholder:font-normal bg-transparent border-0 focus:ring-0 outline-none"
               placeholder="Buscar cliente por DNI..."
               value={searchDni}
-              onChange={(e) => setSearchDni(e.target.value)}
+              onChange={(e) => {
+                setSearchDni(e.target.value);
+                if (e.target.value.trim() === '') {
+                  sessionStorage.removeItem('veterinaria_last_dni');
+                }
+              }}
               disabled={isSearching}
               autoComplete="off"
             />
-            <div className="pr-2 pl-4">
+            {searchDni && !isSearching && (
+              <button 
+                type="button" 
+                onClick={handleClear}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors mr-2"
+              >
+                <X size={20} />
+              </button>
+            )}
+            <div className="pr-2 pl-2">
               <button
                 type="submit"
                 disabled={isSearching || !searchDni.trim()}
